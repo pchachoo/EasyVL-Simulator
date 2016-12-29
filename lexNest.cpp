@@ -111,11 +111,7 @@ struct componentlist
 
 
 int tempglobalcounter= 0;
-//static std::vector<int>  firstsimulation;//variable to flag first call to Simulate function
-//static std::vector<std::vector<int> > firstsimulation;
-/*std ::vector<struct currentvalue> currentValue;
-std ::vector<struct currentvalue> prevValue;
-std ::vector<struct trisvalue> trisValue;*/
+
 struct trisvalue temptv_vector;
 unsigned no_of_transitions = 0;
 std::ifstream readinput;
@@ -217,9 +213,7 @@ int ComputeTrisValue(){
 	return 0;
 }
 
-void CreatenetList(/*std::vector<struct componentstruct> componentdetails,*/
-			 /*std::vector<struct netstruct> unsortednet,*//*std::vector<struct modulestruct>&moduledetails,*/
-/*			 std::vector<struct netlist>*netList,*/
+void CreatenetList(
 			 std::ofstream &netlist_file)
 {
 	// Populating the NETLIST
@@ -265,51 +259,6 @@ void CreatenetList(/*std::vector<struct componentstruct> componentdetails,*/
 		//std::cout<<"Once in CreateNet" <<std::endl;
 
 	}
-
-/*
- 	{
-		for(i = 0; i < moduledetails->unsortednet.size();i++)
-		{
-			std::cout<<"In first for of CreatenetList  unsortednet.size = "<<moduledetails->unsortednet.size()<<std::endl;
-
-			nComp = 0;
-			for ( j= 0 ; j < moduledetails->componentdetails.size();j++)
-			{
-				for( k = 0; k < moduledetails->componentdetails[j].pinname.size();k++)
-				{
-					if (moduledetails->unsortednet[i].wirename.compare(moduledetails->componentdetails[j].pinname[k]) == 0)
-					{
-
-						if(moduledetails->unsortednet[i].wireindex <=  moduledetails->componentdetails[j].busstartindex[k] )
-						{
-							if(moduledetails->unsortednet[i].wireindex >=  moduledetails->componentdetails[j].busendindex[k])
-							{
-								tempcomponentList.componentType.assign(moduledetails->componentdetails[j].componenttype);
-								tempcomponentList.componentName.assign(moduledetails->componentdetails[j].componentname);
-								tempcomponentList.pinLocation = k;
-								tempcomponentList.componentID = j;
-								tempnetList.componentList.push_back(tempcomponentList);
-								nComp++;
-								std::cout<<"cd  = "<<j<<moduledetails->componentdetails[j].componenttype<<std::endl;
-							}
-						}
-					}
-				}
-			}
-			tempnetList.wireName.assign(moduledetails->unsortednet[i].wirename);
-			moduledetails->netList.push_back(tempnetList);
-			while (nComp--)
-				tempnetList.componentList.pop_back();
-		}
-		std::cout<<"Once in CreateNet" <<std::endl;
-
-	}
- *
- */
-	//std::cout<<"netList Size before writetofile = "<< moduledetails[0].netList.size() <<std::endl;
-
-	//writetofile(moduledetails, /*componentdetails, moduledetails[moduleno].unsortednet,netList,*/netlist_file);
-
 }
 
 int TokenizeModule(std::vector<std::string> &tokenvector, unsigned *index,struct modulestruct *tempmodule)
@@ -320,19 +269,6 @@ int TokenizeModule(std::vector<std::string> &tokenvector, unsigned *index,struct
 	struct netstruct tempnet, comparenet;
 	struct moduleparameters temp_mp;
 	int retValue = 0;
-/*	struct modulestruct {
-		std::string modulename;
-		std::vector<struct moduleparameters> moduleparameters;
-		std::vector<struct componentstruct>componentdetails;
-		std::vector<struct netstruct> net;
-		std::vector<struct netstruct> unsortednet;
-	};
-	struct moduleparameters{
-		int type; // 0 = input 1 = output
-		std::string pinname;
-		int busstartindex;//-1 for single wire
-		int busendindex;//-1 for single wire
-	};*/
 
 	unsigned i = *index;
 	tempmodule->modulename.assign(tokenvector[i]);
@@ -349,7 +285,6 @@ int TokenizeModule(std::vector<std::string> &tokenvector, unsigned *index,struct
 	else //get the remaining string and store in moduleparameters
 	{
 		i++;//skip "("
-//////////////////////////////////////////444444444444444444
 		while(tokenvector[i].compare(";")!=0)//till end of Wire list;
 		{
 			//std::cout<<"i =  "<<i<<" " <<tokenvector[i]<<std::endl;
@@ -483,7 +418,7 @@ void TokenizeAssign(std::vector<std::string> &tokenvector, unsigned *index, std:
 				tempcomp.busendindex.pop_back();//token is a bus, and will have valid index
 				//If neither msb nor lsb is specied (both are -1), then the msb should be
 				//updated to (width-1) and the lsb should be updated to 0, since the pin refers
-				//to the whole bus. Oct 6, No change
+				//to the whole bus.
 				tempcomp.busstartindex.push_back(net[wireexists].wiresize-1);//TODO would not work for wirename[m:n] where n!=0
 				tempcomp.busendindex.push_back(0);
 
@@ -503,9 +438,9 @@ void TokenizeAssign(std::vector<std::string> &tokenvector, unsigned *index, std:
 
 				tempcomp.busstartindex.push_back(atoi(tokenvector[i].c_str()));//save index
 
-				//If the msb is specied but the lsb is not (the lsb is ..1), then it must be true
+				//If the msb is specified but the lsb is not (the lsb is ..1), then it must be true
 				//that width > msb . 0. The lsb should be updated to be the same as the
-				//msb, since the pin refers to a single bit within the bus.//Oct 6 modified ; 2 line below added
+				//msb, since the pin refers to a single bit within the bus.
 				tempcomp.busendindex.pop_back();//token is a bus, and will have valid index
 				tempcomp.busendindex.push_back(atoi(tokenvector[i].c_str()));//save index
 
@@ -564,10 +499,10 @@ void TokenizeAssign(std::vector<std::string> &tokenvector, unsigned *index, std:
 						state = ERROR;
 					}
 				}
-				if (state == ERROR)//Oct11 after submissi            on
-					tempcomp.pass.push_back(0);//Oct11 after submission
-				else//Oct11 after submission
-					tempcomp.pass.push_back(1);//Oct11 after submission
+				if (state == ERROR)
+					tempcomp.pass.push_back(0);
+				else
+					tempcomp.pass.push_back(1);
 			}
 		}
 		if(componentsize ==2) break;
@@ -592,11 +527,7 @@ void TokenizeAssign(std::vector<std::string> &tokenvector, unsigned *index, std:
 		std::cout<<"CheckComponent failed "<<std::endl;
 	for(int ii = 0; ii<tempcomp.pinname.size();ii++ )
 	{
-		//std::cout<<"tempcomp.pinname  "<< tempcomp.pinname[ii]<<std::endl;
-		//std::cout<<"tempcomp.busstartindex  "<< tempcomp.busstartindex[ii]<<std::endl;
-		//std::cout<<"tempcomp.busendindex  "<< tempcomp.busendindex[ii]<<std::endl;
-		//std::cout<<"tempcomp.pass  "<< tempcomp.pass[ii]<<std::endl;
-
+		
 	}
 	tempcomp.busendindex.clear();
 	tempcomp.busstartindex.clear();
@@ -611,10 +542,7 @@ void TokenizeAssign(std::vector<std::string> &tokenvector, unsigned *index, std:
 }
 
 void parse( std::vector<std::string> &tokenvector,
-		   std::vector<struct modulestruct> &moduledetails
-/*		   std::vector<struct componentstruct> &componentdetails,
-		   std::vector<struct netstruct> &net,
-		   std::vector<struct netstruct> &unsortednet*/)
+		   std::vector<struct modulestruct> &moduledetails)
 			//std::vector<std::string> &modulenamevector)
 
 {
@@ -636,10 +564,6 @@ void parse( std::vector<std::string> &tokenvector,
 
 	for(i=0;i<vecsize; i++)
 	{ //operations on tokenvector[i]
-		/*std::transform(tokenvector[i].begin(),
-			tokenvector[i].end(),
-			tokenvector[i].begin(),
-			std::ptr_fun<int,int>(::tolower));*/
 		if(tokenvector[i].compare("module")==0)
 		{ //if state is MODULE, next state should be module name, next should be semicolon
 			state = MODULE;
@@ -650,10 +574,6 @@ void parse( std::vector<std::string> &tokenvector,
 			tempmodule.unsortednet.clear();
 
 			TokenizeModuleRetValue = TokenizeModule(tokenvector,&i,&tempmodule);
-			//std::cout<<" After TokenizeModule tokenvector[i] =  "<<tokenvector[i]<<std::endl;
-
-			//tempmodule.modulename.assign(tokenvector[i]);
-			//i++;
 		}
 		else if(tokenvector[i].compare("wire")==0)
 		{
@@ -672,12 +592,10 @@ void parse( std::vector<std::string> &tokenvector,
 					//					tempwire.wirename.assign(tokenvector[i]);
 					if(wiresize==0)//no [m:n] at beginning of wire token
 						wiresize = 1;
-					//					tempwire.wiresize = wiresize;
 
-					//	wiredetails.push_back(tempwire);
 					if(tokenvector[i].compare("[")==0)
-					{//wire is a bus  //something wrong here Oct 9 since in1 is in tokenvector[i] it goes to else
-						//						wiredetails.pop_back();// pop vector cause it now has name=[ and size=0 in it
+					{//wire is a bus 
+						//wiredetails.pop_back();// pop vector cause it now has name=[ and size=0 in it
 						wireupper = atoi(tokenvector[i+1].c_str());
 						wirelower = atoi(tokenvector[i+3].c_str());
 						wiresize = wireupper - wirelower+1;//wire size = upperlimit-lowerlimit+1
@@ -700,11 +618,6 @@ void parse( std::vector<std::string> &tokenvector,
 					}
 					else
 					{//single wire
-						//			wireupper = 0;
-						//			wirelower = 0;
-						//			tempnet.wirename.assign(tokenvector[i]);
-						//			tempnet.wireindex = -1;
-						//			tempnet.wiresize = wiresize;
 						int tempsize = 0;
 						//loop needed for wires defined as: wire [m:n] s0, s1;
 						while(tempsize<wiresize){ //if wiresize is 1, loop will be run only once. 
@@ -823,14 +736,10 @@ void parse( std::vector<std::string> &tokenvector,
 								tempcomp.busendindex.pop_back();//token is a bus, and will have valid index
 								//If neither msb nor lsb is specied (both are -1), then the msb should be
 								//updated to (width-1) and the lsb should be updated to 0, since the pin refers
-								//to the whole bus. Oct 6, No change
+								//to the whole bus.
 								tempcomp.busstartindex.push_back(tempmodule.net[wireexists].wiresize-1);//TODO would not work for wirename[m:n] where n!=0
 								tempcomp.busendindex.push_back(0);
-
-								//	std::cout<<"wire details in tempcomp = "<<tempcomp.pinname<<" "<<tempcomp.busstartindex<<" "<<tempcomp.busendindex<<std::endl;
-								//std::cout<<"wire details in tempcomp = "<<tempcomp.pinname[0]<<" "<<tempcomp.busstartindex[0]<<" "<<tempcomp.busendindex[0]<<std::endl;
 							}
-							//			else std::cout<<"single wire"<<std::endl;
 						}
 						else if(tokenvector[i].compare("[")==0)
 						{
@@ -841,7 +750,7 @@ void parse( std::vector<std::string> &tokenvector,
 
 								//If the msb is specied but the lsb is not (the lsb is ..1), then it must be true
 								//that width > msb . 0. The lsb should be updated to be the same as the
-								//msb, since the pin refers to a single bit within the bus.//Oct 6 modified ; 2 line below added
+								//msb, since the pin refers to a single bit within the bus.
 								tempcomp.busendindex.pop_back();//token is a bus, and will have valid index
 								tempcomp.busendindex.push_back(atoi(tokenvector[i].c_str()));//save index
 
@@ -884,10 +793,10 @@ void parse( std::vector<std::string> &tokenvector,
 										state = ERROR;
 									}
 								}
-								if (state == ERROR)//Oct11 after submissi            on
-									tempcomp.pass.push_back(0);//Oct11 after submission
-								else//Oct11 after submission
-									tempcomp.pass.push_back(1);//Oct11 after submission
+								if (state == ERROR)
+									tempcomp.pass.push_back(0);
+								else
+									tempcomp.pass.push_back(1);
 							}
 						}//end of else-if inside LPAREN
 						else if((tokenvector[i].compare(")")==0))
@@ -903,41 +812,6 @@ void parse( std::vector<std::string> &tokenvector,
 				}//end of else
 			}// end of while(tokenvector[i].compare(";")!=0)
 
-/*
-////////////////////////////////
-//if component is module , check if it is already declared, else set flag modulenotfound to 1 so that it can be checked later
-			if((tempcomp.componenttype.compare("evl_one") != 0)&&
-					(tempcomp.componenttype.compare("evl_zero") != 0)&&
-					(tempcomp.componenttype.compare("and") != 0)&&
-					(tempcomp.componenttype.compare("or") != 0)&&
-					(tempcomp.componenttype.compare("xor") != 0)&&
-					(tempcomp.componenttype.compare("dff") != 0)&&
-					(tempcomp.componenttype.compare("evl_input") != 0)&&
-					(tempcomp.componenttype.compare("evl_output") != 0)&&
-					(tempcomp.componenttype.compare("not") != 0)&&
-					(tempcomp.componenttype.compare("buf") != 0)&&
-					(tempcomp.componenttype.compare("tris") != 0)&&
-					(tempcomp.componenttype.compare("evl_clock") != 0)&&
-					(tempcomp.componenttype.compare("evl_lut") != 0))
-			{
-				for(i = 0; i < moduledetails.size(); i++)
-				{
-					std::cout<<"moduledetails = "<< moduledetails[i].modulename <<std::endl;
-					std::cout<<"cs.componenttype = "<< tempcomp.componenttype <<std::endl;
-
-					if (tempcomp.componenttype.compare(moduledetails[i].modulename)== 0)
-					{
-						tempcomp.modulenotfound = 0;
-						break;
-					}
-					else
-					{
-						tempcomp.modulenotfound = 1;
-					}
-				}
-			}
-			////////////////////////////
-*/
 			tempcomp.componentsize = componentsize;
 			RetValue = CheckComponent(tempcomp);
 			if(RetValue != 0)
@@ -1162,18 +1036,9 @@ int CheckComponent(/*const std::vector<struct modulestruct> & moduledetails,*/st
 	}
 	else if(cs.componenttype == "evl_lut")//bonus
 			ret = 1;
-/*	else if(cs.componenttype == "assign"){
-		if(cs.componentsize != 2) ret = 0;// check no of pins;should be qxactly 2
-		//check width of each pin; needs to be equal
-		if((cs.busstartindex[0] - cs.busendindex[0] + 1) != (cs.busstartindex[1] - cs.busendindex[1] + 1)){
-			ret = 0;
-		}
-	}*/
+
 	else // it is a module ; for module it sets modulenotfound flag too ; if modulenotfound, ret is set to 1 so that component gets added and it is later confirmed with all modules added to the system in second pass
 	{
-		//std::cout<<"cs.componenttype = "<< cs.componenttype <<std::endl;
-
-		//std::cout<<"IN PARSE = "<< moduledetails.size() <<std::endl;
 		//Initialize else if module lfsr10 (first module in bonustest2.evl)found before declaration of test , program will hang
 		cs.modulenotfound = 1;
 		ret = 2;
@@ -1219,51 +1084,14 @@ int CheckComponent(/*const std::vector<struct modulestruct> & moduledetails,*/st
 			}
 
 		}//
-		// if component matched with some module, check the pin widths
-/*		if(!cs.modulenotfound)
-		{
-			//check pinsize
-			if(cs.pinname.size() != moduledetails[i].moduleparameters.size())
-			{
-				std::cout<<"moduledetails moduleparameters.size() = "<< moduledetails[i].moduleparameters.size() <<std::endl;
-				std::cout<<"cs.pinname.size()  = "<< cs.pinname.size() <<std::endl;
-				ret = 0;
-			}
-			else if(cs.pinname.size() == moduledetails[i].moduleparameters.size())
-			{
-				for(j = 0; j < cs.pinname.size(); j++)
-				{
-					if((cs.busstartindex[j]-cs.busendindex[j]+1) != (moduledetails[i].moduleparameters[j].busstartindex-moduledetails[i].moduleparameters[j].busendindex+1))
-					{
-						ret = 0;
-						break;
-					}
-				}
-			}
-		}*/
 	}
 	return ret;
 }
 
-/*struct moduleparameters
-{
-	int type; // 0 = input 1 = output
-	std::string pinname;
-	int busstartindex;//-1 for single wire
-	int busendindex;//-1 for single wire
-};*/
-void writetofile(/*const std::vector<struct modulestruct> & moduledetails,*/
-/*				 const std::vector<struct componentstruct> & componentdetails,*/
-/*				 const std::vector<struct netstruct> & net, */
-/*				 const std::vector<struct netlist> & netList, */
-				 std::ofstream &netlist_file)
+void writetofile( std::ofstream &netlist_file)
 {
 					 unsigned int n=0,m=0,mvs=0;
-					 int k = 0;// Nov
-		//std::cout<<"In  write to file moduledetails.size() = "<< moduledetails.size() <<std::endl;
-		//std::cout<<"In  write to file moduledetails modulename = "<< moduledetails[0].modulename <<std::endl;
-		//std::cout<<"In  write to file moduledetails modulename = "<< moduledetails[1].modulename <<std::endl;
-
+					 int k = 0;
 					 // Creating output file of netlist
 					 for(mvs = 0; mvs<moduledetails.size();mvs++){ //for every module in the code
 						 netlist_file<< "module" << " "<< moduledetails[mvs].modulename << std::endl;
@@ -1277,8 +1105,6 @@ void writetofile(/*const std::vector<struct modulestruct> & moduledetails,*/
 								 netlist_file<<"\t net "<< moduledetails[mvs].unsortednet[n].wirename<<" "<<moduledetails[mvs].netList[n].componentList.size()<<std::endl;
 
 							 for(m =0;m< moduledetails[mvs].netList[n].componentList.size();m++){
-
-									//std::cout<<"netList Size in write to file = "<< moduledetails[mvs].netList.size() <<std::endl;
 
 								 if(moduledetails[mvs].netList[n].componentList[m].componentName != "")
 									 netlist_file<<"\t\t "<<moduledetails[mvs].netList[n].componentList[m].componentType<<" "
@@ -1454,8 +1280,6 @@ int trisvalueadd(struct trisvalue tempnet, std::vector<struct trisvalue> &net){
 		//Either the value of the first character that does not match
 		//is higher in the compared string, or all compared characters match
 		//but the compared string is longer.
-		//		std::cout<<idx<<" new element "<<tempnet.wirename<<"["<<tempnet.wireindex<<"]"<<std::endl;
-		//		std::cout<<idx<<" element from list "<<net[idx].wirename<<"["<<net[idx].wireindex<<"]"<<std::endl;
 		while((idx< net.size())&&((tempnet.wirename.compare(net[idx].wirename)) >= 0)){
 			//		std::cout<<"smaller element; keep going"<<std::endl;
 			idx++;
@@ -1491,7 +1315,7 @@ int netadd(struct netstruct tempnet, std::vector<struct netstruct> &net){
 			return -1;
 		}
 		while((idx < net.size())&&(tempnet.wireindex > net[idx].wireindex) &&
-			((tempnet.wirename.compare(net[idx].wirename)) == 0)){//insert after other elements of bus// Oct 8
+			((tempnet.wirename.compare(net[idx].wirename)) == 0)){//insert after other elements of bus
 				//		std::cout<<"increment idx"<<std::endl;
 				idx++;
 		}
@@ -1535,14 +1359,6 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	//std::string output_file_name = std::string(argv[1])+".syntax";
-	//std::ofstream output_file(output_file_name.c_str());
-	//if (!output_file)
-	//{
-	//	std::cerr << "Can't write " << argv[1] << ".syntax ." << std::endl;
-	//	return -1;
-	//}
-
 	// open stream for writing netlist
 	std::string output_file_name = std::string(argv[1])+".netlist";
 	std::ofstream netlist_file(output_file_name.c_str());
@@ -1572,25 +1388,7 @@ int main(int argc, char *argv[])
 	std::cout<<"Second part."<<std::endl;
 
 	//for(moduleno = 0; moduleno < moduledetails.size(); moduleno++)
-		CreatenetList(/*componentdetails,unsortednet,*//*netList,*/netlist_file);
-
-	//CreatenetList(/*componentdetails,unsortednet,*/&moduledetails[1],/*netList,*/netlist_file);
-	//std::cout<<"moduledetails Size after CreatenetList = "<< moduledetails.size() <<std::endl;
-	//std::cout<<"netList 0 Size after CreatenetList = "<< moduledetails[0].netList.size() <<std::endl;
-	//std::cout<<"netList 1 Size after CreatenetList = "<< moduledetails[1].netList.size() <<std::endl;
-	//std::cout<<"componentdetails 0 Size after CreatenetList = "<< moduledetails[0].componentdetails.size() <<std::endl;
-	//std::cout<<"componentdetails 1 Size after CreatenetList = "<< moduledetails[1].componentdetails.size() <<std::endl;
-
-	//std::cout<<"unsortednet 0 Size after CreatenetList = "<< moduledetails[0].unsortednet.size() <<std::endl;
-	//std::cout<<"unsortednet 1 Size after CreatenetList = "<< moduledetails[1].unsortednet.size() <<std::endl;
-
-	//std::cout<<"moduleparameters 0 Size after CreatenetList = "<< moduledetails[0].moduleparameters.size() <<std::endl;
-	//std::cout<<"moduleparameters 1 Size after CreatenetList = "<< moduledetails[1].moduleparameters.size() <<std::endl;
-
-	//std::cout<<"moduleparameters 0 0 pinname = "<< moduledetails[0].moduleparameters[0].pinname <<std::endl;
-	//std::cout<<"moduleparameters 1 0 pinname = "<< moduledetails[1].moduleparameters[0].pinname <<std::endl;
-	//std::cout<<"moduleparameters 1 1 pinname = "<< moduledetails[1].moduleparameters[1].pinname <<std::endl;
-
+	CreatenetList(/*componentdetails,unsortednet,*//*netList,*/netlist_file);
 	writetofile(/*moduledetails,*/ /*componentdetails, moduledetails[moduleno].unsortednet,netList,*/netlist_file);
 
 	netlist_file.close();
@@ -1639,16 +1437,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-/*		for(moduleno = 0; moduleno < moduledetails.size(); moduleno++)
-		{
-			std::cout<<"module name in MAIN  = "<< moduledetails[moduleno].modulename <<std::endl;
-
-			for ( j= 0 ; j < moduledetails[moduleno].componentdetails.size();j++)
-			{
-				std::cout<<"cd name in MAIN  = "<< moduledetails[moduleno].componentdetails[j].componenttype <<std::endl;
-
-			}
-		}*/
 	for ( j= 0 ; j < NO_OF_SIMULATIONS;j++)
 	{
 		for(moduleno = 0; moduleno < moduledetails.size(); moduleno++)
@@ -1678,19 +1466,6 @@ int main(int argc, char *argv[])
 		//	std::cout<<"curentValue in Sim Loop = "<<currentValue[m].wirename <<" "<<currentValue[m].wirevalue[0]<<std::endl;
 
 	}
-
-/*	for(moduleno = 0; moduleno < moduledetails.size(); moduleno++)
-	{
-		std::cout<<"module name in MAIN  = "<< moduledetails[moduleno].modulename <<std::endl;
-
-		for ( j= 0 ; j < moduledetails[moduleno].componentdetails.size();j++)
-		{
-			std::cout<<"cd name in MAIN  = "<< moduledetails[moduleno].componentdetails[j].componenttype <<std::endl;
-
-		}
-	}*/
-
-
 	moduledetails.clear();
 	//netList.clear();
 	readinput.close();//bonus1
@@ -1728,11 +1503,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 	static unsigned int no_of_pins;
 
 	i = cd_index;
-	//int zvalue = 0;// for coponemttype = 'buf'
 
-	//std::cout<<"In Simulate  ="<<cd[i].componenttype<<std::endl;
-
-	//for(i = 0; i< cd.size();i++)
 	{
 		if(cd[i].componenttype == "assign")
 		{
@@ -1767,19 +1538,12 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			found = 0;lsb = 0; msb = 0;
 			for(k = 0; k< moduledetails[me].currentValue.size(); k++)//find input pin value in currentValue vector
 			{
-				//std::cout<<"wirenames  OF currentValue  ="<<moduledetails[me].currentValue[k].wirename<<std::endl;
-				//std::cout<<"pinname  OF cd  ="<<cd[i].pinname[1]<<std::endl;
-				//std::cout<<"componenttype  OF cd  ="<<cd[i].componenttype<<std::endl;
 				if(moduledetails[me].currentValue[k].wirename.compare(cd[i].pinname[1]) == 0)
 				{
 					found = 1;
 					break;
 				}
 			}
-
-			//result = moduledetails[me].currentValue[k].wirevalue[0];// temp to remove
-			//std::string sn =  moduledetails[me].currentValue[k].wirename;//temp to remove
-			//const char *gg2 = moduledetails[me].currentValue[k].wirename.c_str();//temp
 
 			if(found)// get the pin in the bus
 			{
@@ -1836,21 +1600,11 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 
 			moduledetails[me].currentValue.insert(moduledetails[me].currentValue.begin()+k,tempcv_vector);
 			tempcv_vector.wirevalue.pop_back();
-
-			//cd[i].pinvalue.insert(cd[i].pinvalue.begin(), tempcv.wirevalue);// update out pin of the component
-
-			//for(k = 0; k< moduledetails[me].currentValue.size(); k++)
-			//std::cout<<"CONTENTS OF currentValue in assign = "<<moduledetails[me].currentValue[k].wirename<<" "<<moduledetails[me].currentValue[k].wirevalue[0]<<std::endl;
-
 		}
-		else if((cd[i].componenttype == "not") && (evloutput == 0))//Initial Release //pscnot
+		else if((cd[i].componenttype == "not") && (evloutput == 0))//Initial Release 
 		{
 			if (cd[i].simulationID == TransId) return;
-			//if(TransId == moduledetails[prev_me].componentdetails[prev_cde].simulationID) return;
-			//if(moduledetails[prev_me].componentdetails[prev_cde].componenttype.compare("module") != 0)
 				cd[i].simulationID = TransId;
-
-			//std::cout<<"In Component Type ="<<cd[i].componenttype<<std::endl;
 
 			// find the input pin in the netList structure and correspond ComponentID to check if it is already computed
 			if(CheckComponentExecStatus(cd[i],1,cd[i].busstartindex[1],net,nl,&nlIndex,&clIndex)==1)
@@ -1931,7 +1685,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			//for(k = 0; k< currentValue.size(); k++) //
 			//std::cout<<"CONTENTS OF currentValue in not = "<<currentValue[k].wirename<<" "<<currentValue[k].wirevalue[0]<<std::endl;
 		}
-		else if((cd[i].componenttype == "buf") && (evloutput == 0))//pscbuf // to do Z implementation
+		else if((cd[i].componenttype == "buf") && (evloutput == 0))
 		{
 			if(cd[i].simulationID == TransId) return;
 			//if(moduledetails[prev_me].componentdetails[prev_cde].componenttype.compare("module") != 0)
@@ -2016,125 +1770,8 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			//	for(k = 0; k< currentValue.size(); k++) 
 			//	std::cout<<"CONTENTS OF currentValue in BUF ="<<currentValue[k].wirename<<std::endl;
 		}
-		/*else if((cd[i].componenttype == "buf") && (evloutput == 0))//pscbuf // to do Z implementation
-		{
-		if(cd[i].simulationID == TransId) return;
-
-		cd[i].simulationID = TransId;
-
-		std::cout<<"In Component Type ="<<cd[i].componenttype<<std::endl;
-		// find the input pin in the netList structure and correspond ComponentID to check if it is already computed
-		CheckComponentExecStatus(cd[i],1,net,nl,&nlIndex,&clIndex);
-
-		input_pin_cd = nl[nlIndex].componentList[clIndex].componentID;
-		//int tt22 = cd[input_pin_cd].simulationID;// temp to remove
-		if(cd[input_pin_cd].simulationID < TransId) 
-		{
-		Simulate(argv,cd,input_pin_cd,net,nl,TransId,0);
-		//std::cout<<"back to  Component Type ="<<cd[i].componenttype<<std::endl;
-		}
-		// get the value of the pin
-		found = 0;lsb = 0; msb = 0;
-		for(k = 0; k< currentValue.size(); k++)//find input pin value in currentValue vector
-		{
-		//	std::cout<<"CONTENTS OF currentValue  ="<<currentValue[k].wirename<<std::endl;
-		if(currentValue[k].wirename.compare(cd[i].pinname[1]) == 0) 
-		{
-		found = 1;
-		break;
-		}
-		}
-		if(found)// get the input pin in the bus
-		{
-		if(cd[i].busstartindex[1] != -1)// not a single wire
-		{
-		msb = cd[i].busstartindex[1];
-		lsb = cd[i].busendindex[1];
-
-		std::cout<<"Name OF currentValue [0] ="<<currentValue[k].wirename <<std::endl;
-
-		std::cout<<"CONTENTS OF currentValue [0] ="<<currentValue[k].wirevalue[0] <<std::endl;
-		std::cout<<"CONTENTS OF currentValue [1] ="<<currentValue[k].wirevalue[1] <<std::endl;
-
-		if(currentValue[k].wirevalue[1] > 0)// 'Z' value present, ignore wirevalue[0]
-		{
-		result = (currentValue[k].wirevalue[1] >> lsb) & ~(~0 << (msb-lsb+1));
-		zvalue = 1;
-		}
-		else
-		{
-		result = (currentValue[k].wirevalue[0] >> lsb) & ~(~0 << (msb-lsb+1));
-		zvalue = 0;
-
-		}
-		}
-		else 
-		result = currentValue[k].wirevalue[0];
-		}
-		else
-		result = 0;
-
-		if(result == 1)//cd[i].pinvalue[1] ==1)//If the input in is 1, then the output out is 1; otherwise out is 0.
-		temppinv = 1;
-		else 
-		temppinv = 0;
-
-
-		lsb = cd[i].busendindex[0];
-		if(lsb != -1) // if not a single wire
-		temppinv = temppinv<<lsb; // move the bit to the location pointed by lsb or msb; both are same for buf gate
-
-
-		found = 0;// search for the out pin of the BUF component
-		for(k = 0; k< currentValue.size(); k++)
-		{
-		if(currentValue[k].wirename.compare(cd[i].pinname[0]) == 0) 
-		{
-		found = 1;
-		break;
-		}
-		}
-		tempcv.wirename.assign(cd[i].pinname[0]);  // initialise tempcv
-		if(found)
-		{
-		if(zvalue)
-		tempcv.wirevalue = UpdateCurrentValue(currentValue[k].wirevalue[1], temppinv,cd[i].busendindex[0], cd[i].busstartindex[0]);
-		else 
-		tempcv.wirevalue = UpdateCurrentValue(currentValue[k].wirevalue[0], temppinv,cd[i].busendindex[0], cd[i].busstartindex[0]);
-		}
-		else 
-		tempcv.wirevalue = temppinv;
-
-		if(found)
-		currentValue.erase(currentValue.begin()+k);	// earse the exsting value
-
-		tempcv_vector.wirename = tempcv.wirename;
-
-		if(zvalue)
-		result = 0;
-		//tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin()+1,tempcv.wirevalue);
-		else 
-		{
-		tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin(),tempcv.wirevalue);
-
-		//clear corresponding 'Z' if present
-		result = (0 >> lsb) & ~(~0 << (msb-lsb+1));
-		if(lsb != -1) // if not a single wire
-		result = result<<lsb; // move the bit to the location pointed by lsb or msb; both are same for buf gate
-
-		//	tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin()+1,result);
-
-		}
-
-		currentValue.insert(currentValue.begin()+k,tempcv_vector);
-		tempcv_vector.wirevalue.pop_back();
-
-		// update out pin of the component; 'Z' case cannot be taken care here ; this is anyway redundant
-		cd[i].pinvalue.insert(cd[i].pinvalue.begin(), tempcv.wirevalue);
-		//	for(k = 0; k< currentValue.size(); k++) 
-		//	std::cout<<"CONTENTS OF currentValue in BUF ="<<currentValue[k].wirename<<std::endl;
-		}*/
-		else if((cd[i].componenttype == "and") && (evloutput == 0))//pscand
+		
+		else if((cd[i].componenttype == "and") && (evloutput == 0))
 		{
 			if(cd[i].simulationID == TransId) return;
 			//if(moduledetails[prev_me].componentdetails[prev_cde].componenttype.compare("module") != 0)
@@ -2226,7 +1863,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			//for(k = 0; k< moduledetails[me].currentValue.size(); k++)
 				//std::cout<<"CONTENTS OF currentValue in AND ="<<moduledetails[me].currentValue[k].wirename<< " " <<moduledetails[me].currentValue[k].wirevalue[0] <<std::endl;
 		}
-		else if((cd[i].componenttype == "or") && (evloutput == 0))//pscor
+		else if((cd[i].componenttype == "or") && (evloutput == 0))
 		{
 			if(cd[i].simulationID == TransId) return;
 			//if(moduledetails[prev_me].componentdetails[prev_cde].componenttype.compare("module") != 0)
@@ -2316,7 +1953,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			//for(k = 0; k< moduledetails[me].currentValue.size(); k++)
 				//std::cout<<"CONTENTS OF currentValue in OR ="<<moduledetails[me].currentValue[k].wirename<< " " <<moduledetails[me].currentValue[k].wirevalue[0] <<std::endl;
 		}
-		else if(((cd[i].componenttype == "xor")||(cd[i].componenttype == "xnor")) && (evloutput == 0))//xorpsc
+		else if(((cd[i].componenttype == "xor")||(cd[i].componenttype == "xnor")) && (evloutput == 0))
 		{
 			if(cd[i].simulationID == TransId) return;
 			//if(moduledetails[prev_me].componentdetails[prev_cde].componenttype.compare("module") != 0)
@@ -2431,28 +2068,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 						break;
 					}
 				}// old implementation made like evl_one
-				/*				tempcv.wirename.assign(cd[i].pinname[k]);  
-				if(found)// get the pin in the bus
-				{
-				if(cd[i].busstartindex[k] == -1)//single wire
-				tempcv.wirevalue = currentValue[j].wirevalue[0] & 0;//tempcv.wirevalue & 0;
-				else 
-				{
-				msb = cd[i].busstartindex[k];
-				lsb = cd[i].busendindex[k];
-				tempcv.wirevalue =  UpdateCurrentValue(currentValue[j].wirevalue[0], 0, lsb, msb);
 
-				//result = (currentValue[j].wirevalue[0] >> lsb) & ~(~0 << (msb-lsb+1));
-				//result = result & 0;
-				//result = result << (msb-lsb+1);
-				//result = ~result;
-				//tempcv.wirevalue = ~(currentValue[j].wirevalue[0] | result);
-				}
-				}
-				else 
-				tempcv.wirevalue = 0;
-				//tempcv.wirevalue = UpdateCurrentValue(currentValue[j].wirevalue[0], pindata,cd[i].busendindex[k], cd[i].busstartindex[k]);
-				*/
 				tempcv.wirename.assign(cd[i].pinname[k]);  
 				msb = cd[i].busstartindex[k];
 				lsb = cd[i].busendindex[k];
@@ -2544,17 +2160,13 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			//std::cout<<"CONTENTS OF currentValue in evl_one ="<<moduledetails[me].currentValue[k].wirename<<" "<<moduledetails[me].currentValue[k].wirevalue[0]<<std::endl;
 
 		}
-		else if((cd[i].componenttype == "evl_dff") && (evloutput == 0))//Initial Release // //pscdff
+		else if((cd[i].componenttype == "evl_dff") && (evloutput == 0))//Initial Release
 		{	
-			//std::cout<<"TransID ="<<TransId<<" "<<"moduledetails[prev_me].componentdetails[prev_cde].simulationID " << moduledetails[prev_me].componentdetails[prev_cde].simulationID <<std::endl;
-			//std::cout<<"moduledetails[prev_me].componentdetails[prev_cde].componenttype " << moduledetails[prev_me].componentdetails[prev_cde].componenttype <<std::endl;
-
 			if(cd[i].simulationID == TransId) return;
 			//if(moduledetails[prev_me].componentdetails[prev_cde].componenttype.compare("module") != 0)
 				cd[i].simulationID = TransId;
 			//std::cout<<"In Component Type ="<<cd[i].componenttype<<" "<<"cd index " << i <<std::endl;
 // if this D Flip flop is called first time , set its OUTPUT  to 0 as initial state of each output is supposed to be 0 as per project documnet
-			//if(firstsimulation[i]==1)
 			if(cd[i].firstsimulation==1)
 			{
 				//std::cout<<"In first simulation ="<<cd[i].componenttype<<" "<<"cd index " << i <<std::endl;
@@ -2571,7 +2183,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 				tempcv.wirename.assign(cd[i].pinname[0]);  
 				result = 0;// set output  to zero in first cycle
 // redundant three lines
-				//Nov
 				lsb = cd[i].busendindex[0];
 				if(lsb != -1)// not a single wire
 					result = result<<lsb; // move the bit to the location pointed by lsb  or msb of output pin; both are same for dff gate
@@ -2598,11 +2209,9 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 						break;
 					}
 				}
-// the bug was here
 				tempcv_vector.wirevalue.pop_back();
 //////////////////////////////////////////////////////////////////
 				result = 0;// set output  to zero in first cycle
-				//Nov
 				lsb = cd[i].busendindex[0]; // redundant lines
 				if(lsb != -1)// not a single wire
 					result = result<<lsb; // move the bit to the location pointed by lsb  or msb of output pin; both are same for dff gate
@@ -2626,7 +2235,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 
 				tempcv_vector.wirevalue.pop_back();
 
-				//cd[i].firstsimulation.erase(cd[i].firstsimulation.begin()+i);// Oct 25
 				cd[i].firstsimulation =  0;//.insert(cd[i].firstsimulation.begin()+i,0);
 			}
 			else
@@ -2653,7 +2261,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 					}
 				}
 // set currentValue = prevValue
-//another bug here
 				result = moduledetails[me].prevValue[j].wirevalue[0];
 				/////////////////error was here
 				msb = cd[i].busstartindex[0];
@@ -2667,7 +2274,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 				}
 				else
 					result = 0;
-				///////////////////error was here
 				if(lsb != -1)// not a single wire
 					result = result<<lsb; // move the bit to the location pointed by lsb  or msb of output pin; both are same for dff gate
 						unsigned uu = moduledetails[me].currentValue[k].wirevalue[0];
@@ -2687,11 +2293,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 				moduledetails[me].currentValue.insert(moduledetails[me].currentValue.begin()+k,tempcv_vector);
 				tempcv_vector.wirevalue.pop_back();
 				tempcv_vector.wirename = "";
-				//std::cout<<"prevValue size ="<<prevValue.size()<<std::endl;
-
-				//std::cout<<"CONTENTS OF currentValue in else simulation evl_dff ="<<moduledetails[me].currentValue[0].wirename<<" "<<moduledetails[me].currentValue[0].wirevalue[0]<<std::endl;
-				//std::cout<<"CONTENTS OF prevValue in else simulation evl_dff ="<<prevValue[j].wirename<<" "<<prevValue[j].wirevalue[0]<<std::endl;
-
 			}
 			//std::cout<<"In normal simulation ="<<cd[i].componenttype<<" "<<"cd index " << i <<std::endl;
 			if(CheckComponentExecStatus(cd[i],1,cd[i].busstartindex[1],net,nl,&nlIndex,&clIndex)==1)
@@ -2739,10 +2340,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			lsb = cd[i].busendindex[0];
 			if(lsb != -1)// not a single wire
 				result = result<<lsb; // move the bit to the location pointed by lsb  or msb of output pin; both are same for AND gate
-
-			//std::cout<<"\n D input Value ="<<result<<std::endl;
-			//std::cout<<"\n Q output of Flipflop ="<<cd[i].pinname[0]<<" index = "<<cd[i].busstartindex[0]<<std::endl;
-
 			found = 0;// search for the out pin Q of the FLIP FLOP gate
 			for(k = 0; k< moduledetails[me].currentValue.size(); k++)
 			{
@@ -2761,8 +2358,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 					break;
 				}
 			}
-
-
 			// ignoring the clk, make q = d
 			if(found)
 			{
@@ -2784,24 +2379,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			//std::cout<<"CONTENTS OF prevValue in evl_dff ="<<moduledetails[me].prevValue[j].wirename<<"["<<cd[i].busstartindex[0]<<"]"<<" "<<moduledetails[me].prevValue[j].wirevalue[0]<<std::endl;
 
 			tempcv_vector.wirevalue.pop_back();
-			//std::cout<<"\n Q output Value ="<<tempcv.wirevalue<<std::endl;
-
-			//cd[i].pinvalue.insert(cd[i].pinvalue.begin(),tempcv.wirevalue);
-			// find the input pin in the netList structure and correspond ComponentID to check if it is already computed
-			//std::cout<<"CONTENTS OF prevValue in evl_dff ="<<prevValue[k].wirename<<" "<<prevValue[k].wirevalue[0]<<std::endl;
-			//std::cout<<"\n Q output Value ="<<tempcv.wirevalue<<std::endl;
-			//std::cout<<"prevValue size ="<<prevValue.size()<<std::endl;
-
-			//for(k = 0; k< moduledetails[me].currentValue.size(); k++)
-				//std::cout<<"CONTENTS OF currentValue in evl_dff end ="<<moduledetails[me].currentValue[k].wirename<<" "<<moduledetails[me].currentValue[k].wirevalue[0]<<std::endl;
-
-			//for(k = 0; k< moduledetails[me].prevValue.size(); k++)
-				//std::cout<<"CONTENTS OF prevValue in evl_dff end ="<<moduledetails[me].prevValue[k].wirename<<" "<<moduledetails[me].prevValue[k].wirevalue[0]<<" "<<"cd index " << i <<std::endl;
-
-			//std::cout<<"Value  OF currentValue[1] in evl_dff ="<<moduledetails[me].currentValue[1].wirevalue[0]<<std::endl;
-			//std::cout<<"CONTENTS OF currentValue in normal simulation evl_dff ="<<moduledetails[me].currentValue[0].wirename<<" "<<moduledetails[me].currentValue[0].wirevalue[0]<<std::endl;
-			//std::cout<<"CONTENTS OF prevValue in normal simulation evl_dff ="<<prevValue[j].wirename<<" "<<prevValue[j].wirevalue[0]<<std::endl;
-
 		}
 		else if(cd[i].componenttype == "evl_output")
 		{
@@ -2835,9 +2412,8 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 
 					apb = CreatePinValueString( cd,i);
 					evl_output_file<<apb<<std::endl;
-					evl_output_file.close();//Oct 25
+					evl_output_file.close();
 
-					//firstsimulation[0].erase(firstsimulation[0].begin()+i);// Oct 25
 					cd[i].firstsimulation = 0;//[0].insert(firstsimulation[0].begin()+i,0);
 				}
 				else
@@ -2857,7 +2433,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 					apb = CreatePinValueString( cd,i);
 
 					ofs<<apb<<std::endl;
-					ofs.close();//Oct 25
+					ofs.close();
 				}
 			}
 		}
@@ -2949,10 +2525,10 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 					tempcv_vector.wirevalue.pop_back();
 				}
 				no_of_transitions--;// consumed one transition
-				//firstsimulation.erase(firstsimulation.begin()+i);// Oct 25
+				//firstsimulation.erase(firstsimulation.begin()+i);
 				//firstsimulation.insert(firstsimulation.begin()+i,0);
 				cd[i].firstsimulation = 0;
-				//readinput.close(); //Oct 25 bonus1
+				//readinput.close();
 			}
 			else
 			{
@@ -3037,260 +2613,12 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 					//cd[i].pinvalue.insert(cd[i].pinvalue.begin(),tempcv.wirevalue);
 					tempcv_vector.wirevalue.pop_back();
 				}
-					/*for (loop_var1= no_of_pins-1 ; loop_var1>= 0; loop_var1--)// start from last pin in component details as pindata_read has relevant data in last few indexes
-					{
-						found = 0;
-						tempcv.wirename.assign("");
-						tempcv.wirevalue = 0;
-
-						for(j = 0; j< currentValue.size(); j++)
-						{
-							if(currentValue[j].wirename.compare(cd[i].pinname[loop_var1]) == 0)
-							{
-								found = 1;
-								break;
-							}
-						}
-						if(cd[i].busstartindex[loop_var1] == -1)
-						{
-							tempcv.wirevalue= pindata_read.back();
-							pindata_read.pop_back();//  remove last data after reading
-						}
-						else
-						{
-							unsigned int pindata = pindata_read.back();
-							pindata_read.pop_back();//  remove last data after reading
-							// move the bit to the location pointed by lsb or msb; both are same for NOT gate
-							pindata = pindata << cd[i].busendindex[loop_var1];
-							if (found)
-							{
-								tempcv.wirevalue = UpdateCurrentValue(currentValue[j].wirevalue[0],
-										pindata,cd[i].busendindex[loop_var1], cd[i].busstartindex[loop_var1]);
-							}
-							else
-								tempcv.wirevalue = UpdateCurrentValue(0, pindata,
-										cd[i].busendindex[loop_var1], cd[i].busstartindex[loop_var1]);
-						}
-						tempcv.wirename.assign(cd[i].pinname[loop_var1]);
-
-						if(found)
-							currentValue.erase(currentValue.begin()+j);	// earse the exsting value
-
-						tempcv_vector.wirename = tempcv.wirename;
-						tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin(),tempcv.wirevalue);
-						tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin()+1,0);//clear 'Z'
-						tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin()+2,0);//claer 'X'
-
-						currentValue.insert(currentValue.begin()+j,tempcv_vector);
-						tempcv_vector.wirevalue.pop_back();
-
-						//cd[i].pinvalue.insert(cd[i].pinvalue.begin(),tempcv.wirevalue);
-					}*/
 				}
 				no_of_transitions--;// consumed one transition
 
-				//readinput.close(); //Oct 25 bonus1
+				//readinput.close(); 
 			} //else of subsequent simulation
-			//for(k = 0; k< moduledetails[me].currentValue.size(); k++)
-				//std::cout<<"CONTENTS OF currentValue in evl_input ="<<moduledetails[me].currentValue[k].wirename<<" "<<moduledetails[me].currentValue[k].wirevalue[0]<<std::endl;
-
-
-			/*
-			if(cd[i].simulationID == TransId) return;
-
-			cd[i].simulationID = TransId;
-
-			if(cd[i].firstsimulation==1)
-			{
-				std::cout<<"going into first simulation of evl_input"<<std::endl;
-				input_file_name = argv+"."+ cd[i].componentname+".evl_input";
-				std::ifstream readinput;
-				readinput.open(input_file_name.c_str());
-				std::string filenum;
-				std::vector<int> pinwidth_read;
-				std::vector<unsigned int> pindata_read;
-
-				readinput>>filenum;// read total no of pins
-				unsigned int no_of_pins = (unsigned) atoi(filenum.c_str());//Nov
-				//std::cout<<"\nfile input "<<filenum;
-
-				for(k = 0; k < no_of_pins; k++)
-				{
-					readinput>>filenum;// read pin width
-					pinwidth_read.push_back((unsigned int)atol(filenum.c_str()));
-					//std::cout<<"\nfile input "<<filenum;
-				}
-				readinput>>filenum;// read TransId, dump it
-				for(k = 0; k < no_of_pins; )// read actual data
-				{
-					readinput>>filenum;// read pin data
-					unsigned int tempvar = (unsigned int)strtoul (filenum.c_str(),NULL,16);
-					pindata_read.push_back(tempvar);
-					//std::cout<<"\nfile input "<<filenum;
-					k++;
-				}
-
-				for (k= 0; k< no_of_pins; k++)
-				{
-					found = 0;
-					tempcv.wirename.assign("");
-					tempcv.wirevalue = 0;
-
-					for(j = 0; j< moduledetails[me].currentValue.size(); j++)
-					{
-						if(moduledetails[me].currentValue[j].wirename.compare(cd[i].pinname[k]) == 0)
-						{
-							found = 1;
-							break;
-						}
-					}
-
-					if(cd[i].busstartindex[k] == -1)// single wire
-						tempcv.wirevalue= pindata_read[k];
-					else
-					{
-						// move the bit to the location pointed by lsb or msb; both are same for NOT gate
-						pindata_read[k] = pindata_read[k] << cd[i].busendindex[k];
-
-						if (found)
-						{
-							//tempcv.wirevalue =	moduledetails[me].currentValue[j].wirevalue[0] | pindata_read[k];
-							tempcv.wirevalue = UpdateCurrentValue(moduledetails[me].currentValue[j].wirevalue[0], pindata_read[k],
-								cd[i].busendindex[k], cd[i].busstartindex[k]);
-
-						}
-						else 
-							//tempcv.wirevalue =	pindata_read[k];
-							tempcv.wirevalue = UpdateCurrentValue(0, pindata_read[k],
-							cd[i].busendindex[k], cd[i].busstartindex[k]);
-
-
-					}
-					tempcv.wirename.assign(cd[i].pinname[k]);  
-
-					if(found)
-						moduledetails[me].currentValue.erase(moduledetails[me].currentValue.begin()+j);	// earse the exsting value
-
-					tempcv_vector.wirename = tempcv.wirename;
-					tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin(),tempcv.wirevalue);
-					tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin()+1,0);
-					tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin()+2,0);
-
-
-					//std::cout<<"\nDATA inserted at 0 "<<tempcv_vector.wirevalue[0]<<std::endl;
-					//std::cout<<"\nDATA inserted at 1 "<<tempcv_vector.wirevalue[1]<<std::endl;
-
-					moduledetails[me].currentValue.insert(moduledetails[me].currentValue.begin()+j,tempcv_vector);
-
-					//cd[i].pinvalue.insert(cd[i].pinvalue.begin(),tempcv.wirevalue);
-					tempcv_vector.wirevalue.pop_back();
-					tempcv_vector.wirevalue.pop_back();
-					tempcv_vector.wirevalue.pop_back();
-				}
-
-				//firstsimulation[0].erase(firstsimulation[0].begin()+i);// Oct 25
-				cd[i].firstsimulation = 0;//insert(firstsimulation[0].begin()+i,0);
-				readinput.close(); //Oct 25
 			}
-			else
-			{
-				std::cout<<"going into subsequent simulation of evl_input"<<std::endl;
-				input_file_name = argv+"."+ cd[i].componentname+".evl_input";
-				std::ifstream readinput;
-				readinput.open(input_file_name.c_str());
-				std::string filenum;
-				std::vector<int> pinwidth_read;
-				std::vector<unsigned int> pindata_read;
-
-				readinput>>filenum;// read total no of pins
-				int no_of_pins =  atoi(filenum.c_str());
-				//std::cout<<"\nfile input "<<filenum;
-				int loop_var1;
-
-				for(loop_var1 = 0; loop_var1 < no_of_pins; loop_var1++)// read pin width
-				{
-					readinput>>filenum;
-					pinwidth_read.push_back((unsigned int)atol(filenum.c_str()));
-					//std::cout<<"\nfile input "<<filenum;
-				}
-
-				for(loop_var1 = 0; loop_var1 < NO_OF_SIMULATIONS; loop_var1++)
-				{
-					readinput>>filenum;// read TansId; break if filenum is "", no more lines.
-					//The last line will be used to populate currentValue
-					if(filenum == "")
-						break;
-					int TrId = atoi(filenum.c_str());
-
-					for(j = 0; j < (unsigned)no_of_pins; )// read actual data
-					{
-						readinput>>filenum;// read pin data
-						unsigned int tempvar = (unsigned int)strtoul (filenum.c_str(),NULL,16);
-						pindata_read.push_back(tempvar);
-						//std::cout<<"\nfile input "<<filenum;
-						j++;
-					}
-					if(TrId == TransId)
-						break;
-				}
-
-				for (loop_var1= no_of_pins-1 ; loop_var1>= 0; loop_var1--)// start from last pin in component details as pindata_read has relevant data in last few indexes 
-				{
-					found = 0;
-					tempcv.wirename.assign("");
-					tempcv.wirevalue = 0;
-
-					for(j = 0; j< moduledetails[me].currentValue.size(); j++)
-					{
-						if(moduledetails[me].currentValue[j].wirename.compare(cd[i].pinname[loop_var1]) == 0)
-						{
-							found = 1;
-							break;
-						}
-					}
-					if(cd[i].busstartindex[loop_var1] == -1)
-					{
-						tempcv.wirevalue= pindata_read.back();
-						pindata_read.pop_back();//  remove last data after reading
-					}
-					else
-					{
-						unsigned int pindata = pindata_read.back();
-						pindata_read.pop_back();//  remove last data after reading
-						// move the bit to the location pointed by lsb or msb; both are same for NOT gate
-						pindata = pindata << cd[i].busendindex[loop_var1];
-						if (found)
-						{
-							tempcv.wirevalue = UpdateCurrentValue(moduledetails[me].currentValue[j].wirevalue[0],
-								pindata,cd[i].busendindex[loop_var1], cd[i].busstartindex[loop_var1]);
-						}
-						else 
-							tempcv.wirevalue = UpdateCurrentValue(0, pindata,
-							cd[i].busendindex[loop_var1], cd[i].busstartindex[loop_var1]);
-					}
-					tempcv.wirename.assign(cd[i].pinname[loop_var1]);  
-
-					if(found)
-						moduledetails[me].currentValue.erase(moduledetails[me].currentValue.begin()+j);	// earse the exsting value
-
-					tempcv_vector.wirename = tempcv.wirename;
-					tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin(),tempcv.wirevalue);
-					tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin()+1,0);//clear 'Z'
-					tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin()+2,0);//claer 'X'
-
-					moduledetails[me].currentValue.insert(moduledetails[me].currentValue.begin()+j,tempcv_vector);
-					tempcv_vector.wirevalue.pop_back();
-					tempcv_vector.wirevalue.pop_back();
-					tempcv_vector.wirevalue.pop_back();
-
-					//cd[i].pinvalue.insert(cd[i].pinvalue.begin(),tempcv.wirevalue);
-				}
-				readinput.close(); //Oct 25
-			}
-			for(k = 0; k< moduledetails[me].currentValue.size(); k++)
-				std::cout<<"CONTENTS OF currentValue in evl_input ="<<moduledetails[me].currentValue[k].wirename<<std::endl;
-
-		*/}
 		else if((cd[i].componenttype == "evl_lut") && (evloutput == 0))
 		{
 			std::string filenum;
@@ -3300,10 +2628,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			if(cd[i].simulationID == TransId) return;
 			//if(moduledetails[prev_me].componentdetails[prev_cde].componenttype.compare("module") != 0)
 				cd[i].simulationID = TransId;
-			//ReadLUTFile(cd,i,argv);
-///////////////////////////////////////////////////////////////////////////////////
-			//struct tempcurrentvalue tempcv;
-			//struct currentvalue tempcv_vector;
 			struct componentstruct tempcd;
 			//unsigned i = cd_index;
 
@@ -3377,10 +2701,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			//std::cout<<"Value  OF currentValue[1] in LUT ="<<moduledetails[me].currentValue[1].wirevalue[0]<<std::endl;
 
 			// result is the line no to read in the LUT file after skipping the first line
-////////////////////////////////////////////////////////////////////////////////////
-			//	You don't need to specify all the words but at runtime, any attempt to access
-			//a word on an address that is not specied should be treated as an error that
-			//terminates the simulation immediately. // to do Prachi
+
 			//std::cout<<"going into first simulation of evl_lut"<<std::endl;
 			input_file_name = argv+"."+ cd[i].componentname+".evl_lut";
 			std::ifstream readinput;
@@ -3403,7 +2724,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 				for(k = 0; k< address_width;k++)
 					data_to_read = data_to_read *2;
 				//for(k = 0; k < data_to_read;k++)// read actual data
-				{//tyu
+				{
 					k = 0;
 					do{
 						readinput>>filenum;// read pin data
@@ -3453,22 +2774,11 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 						moduledetails[me].currentValue.erase(moduledetails[me].currentValue.begin()+j);	// earse the exsting value
 
 					tempcv_vector.wirename = tempcv.wirename;
-					//tempcv_vector.wirevalue.insert(tempcv_vector.wirevalue.begin(),tempcv.wirevalue);//prachi ask should it start from, leave first for normal, second for 'Z' , third for 'X' and fourth  onwards for LUT data
-					tempcv_vector.wirevalue.push_back(tempcv.wirevalue);//prachi ask should it start from, leave first for normal, second for 'Z' , third for 'X' and fourth  onwards for LUT data
+					tempcv_vector.wirevalue.push_back(tempcv.wirevalue);
 
 					moduledetails[me].currentValue.insert(moduledetails[me].currentValue.begin()+j,tempcv_vector);
 					tempcv_vector.wirevalue.pop_back();//
-
-					//moduledetails[me].currentValue[j].wirename.assign(tempcv.wirename);
-					//moduledetails[me].currentValue[j].wirevalue.insert(moduledetails[me].currentValue.wirevalue.begin()+k,tempcv.wirevalue);
-
-					//print to see the values
-					//std::cout<<"\ntempcv_vector.wirename "<<tempcv_vector.wirename<<std::endl;
-					//std::cout<<"\ntempcv_vector.wirevalue "<<tempcv_vector.wirevalue[0]<<std::endl;
-
-					//cd[i].pinvalue.insert(cd[i].pinvalue.begin(),tempcv.wirevalue);
-
-				}// tyu
+				}
 				for(k = 0; k < moduledetails[me].currentValue.size();k++)// clear the vector
 				{
 //					std::cout<<"\nROM LUT values "<<tempcv_vector.wirevalue[k]<<std::endl;
@@ -3574,21 +2884,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			/////////////////////////////////////////////////////////////
 			// get the index of output pin 'out' in trisValue
 			/*found = 0*/;lsb = 0; msb = 0;
-/*			for(k = 0; k< trisValue.size(); k++)//find input pin D value in currentValue vector
-			{
-				//	std::cout<<"CONTENTS OF currentValue  ="<<moduledetails[me].currentValue[k].wirename<<std::endl;
-				if(trisValue[k].wirename.compare(cd[i].pinname[0]) == 0)
-				{
-					found = 1;
-					break;
-				}
-			}		*/
-/*			if(!found) // clear temptv vector
-			{
-				temptv_vector.wirename.assign("");
-				temptv_vector.wirevalueB.clear();
-				temptv_vector.wirevalueZ.clear();
-			}*/
 			if(en) 
 				out = in ; 
 			else out = 1;// to store 1 in the array index for 'Z'
@@ -3599,33 +2894,14 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 
 			if(en)
 			{
-				//if(found)
-				//	tempcv.wirevalue =  out;//trisValue[k].wirevalueB|out;//UpdateCurrentValue(moduledetails[me].currentValue[k].wirevalue[0], out, cd[i].busendindex[0], cd[i].busstartindex[0]);
-				//else
 					tempcv.wirevalue =  out;//0|out;//UpdateCurrentValue(0, out, cd[i].busendindex[0], cd[i].busstartindex[0]);
 			}
 			else
 			{
-				//if(found)// if en is 0, store 1 at the bit location in second elememt of the currentValue[k].wirevalue
-				//	tempcv.wirevalue = out;//trisValue[k].wirevalueZ|out;// UpdateCurrentValue(moduledetails[me].currentValue[k].wirevalue[1], out, cd[i].busendindex[0], cd[i].busstartindex[0]);
-				//else
 					tempcv.wirevalue = out;//0|out;// UpdateCurrentValue(0, out, cd[i].busendindex[0], cd[i].busstartindex[0]);
 			}
 			unsigned tempwirevalue = 0;
-			//trisValue[trisvarcount].wirename.assign(cd[i].pinname[0]);
-			/*short trisnamefound = 0, p;
-			for(p = 0; p< trisValue.size(); p++)//find input pin D value in currentValue vector
-			{
-				if(trisValue[p].wirename.compare(cd[i].pinname[0]) == 0)
-				{
-					trisnamefound = 1;
-					break;
-				}
-			}*/
-
 			temptv_vector.wirename.assign(cd[i].pinname[0]);
-
-			//trisValue[k].wirename.assign(cd[i].pinname[0]);
 
 			if(en)
 			{
@@ -3655,26 +2931,8 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 				temptv_vector.wirevalueB = tempwirevalue;//insert(temptv_vector.wirevalueB.begin(),tempwirevalue);
 				temptv_vector.wirevalueZ = tempcv.wirevalue;//insert(temptv_vector.wirevalueZ.begin(),tempcv.wirevalue);
 				trisvalueadd(temptv_vector, moduledetails[me].trisValue);//
-				//std::cout<<"trisValue size in tris  ="<<trisValue.size()<<std::endl;
-
-				//f (found)
-					//trisValue.erase(trisValue.begin()+k);
-				//trisValue.insert(trisValue.begin() +k,temptv_vector);//tempcv.wirevalue);
-				//trisValue.push_back(temptv_vector);//
-				//trisValue[k].wirevalueB.push_back(tempwirevalue);//
-				//trisValue[k].wirevalueZ.push_back(tempcv.wirevalue);//
-				//std::cout<<"trisValue wirevalueZ size in tris  ="<<trisValue[k].wirevalueZ.size()<<std::endl;
-				//std::cout<<"trisValue wirename  in tris  ="<<trisValue[k].wirename<<std::endl;
-
 			}
-
-// adding to trisvalue
-/*			struct trisvalue{
-				std::string wirename;
-				std::vector<unsigned int> wirevalueB;// stores normal 0 and 1;
-				std::vector<unsigned int> wirevalueZ;// stores 1 if  Z;
-			};*/
-
+			
 // These  lines are just to populate currentValue structure else mux_out will not be found when matched with trisValue in CreatePinString
 			//std::cout<<"CONTENTS OF cd[i] pinname MUX_IN = "<< cd[i].pinname[0] <<std::endl;
 			for(k = 0,found = 0; k< moduledetails[me].currentValue.size(); k++)//find output pin D
@@ -3694,17 +2952,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			moduledetails[me].currentValue.insert(moduledetails[me].currentValue.begin()+k,tempcv_vector);
 			tempcv_vector.wirevalue.pop_back();// inserted twice, so pop twice
 			tempcv_vector.wirevalue.pop_back();
-
-			//trisValue.wirevalueB.insert(currentValue.begin()+k,tempcv_vector.wirevalue);
-
-			//std::cout<<"Value  OFcurrentValuee[0] in tris  ="<<moduledetails[me].currentValue[k].wirevalue[0]<<std::endl;
-			//std::cout<<"Value  OF currentValue[1] in tris  ="<<moduledetails[me].currentValue[k].wirevalue[1]<<std::endl;
-			//cd[i].pinvalue.insert(cd[i].pinvalue.begin(),tempcv.wirevalue);
-
-			//for(k = 0; k< moduledetails[me].currentValue.size(); k++)
-			//std::cout<<"CONTENTS OF currentValue in tris ="<<moduledetails[me].currentValue[k].wirename<<std::endl;
-			//std::cout<<"Value  OF currentValue[1] in tris  ="<<moduledetails[me].currentValue[1].wirevalue[0]<<std::endl;
-			//trisvarcount++;
 
 		}
 		else if((cd[i].componenttype == "evl_clock") && (evloutput == 0))
@@ -3755,10 +3002,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 					}
 				}
 				//std::cout<<"module TO BE EXECUTED = "<< k <<std::endl;
-
-				//for(int kk = 0; kk< moduledetails[k].currentValue.size(); kk++) //
-					//std::cout<<"CONTENTS OF currentValue before  module = "<<moduledetails[k].currentValue[kk].wirename<<" "<<moduledetails[k].currentValue[kk].wirevalue[0]<<std::endl;
-
 // check if all parameters required for moduledetails[k] computed
 // find the input pin in the netList structure and correspond ComponentID to check if it is already computed
 				short pn = 0;
@@ -3821,18 +3064,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 
 						moduledetails[me].currentValue.insert(moduledetails[me].currentValue.begin(),tempcv_vector);
 						tempcv_vector.wirevalue.pop_back();
-
-						//moduledetails[me].currentValue[xx].wirevalue.insert(moduledetails[me].currentValue[xx].wirevalue.begin(),storeData[ww].CV[xx]);
-						//std::cout<<" load the computed data = "<<moduledetails[me].currentValue[xx].wirename<<" "<<moduledetails[me].currentValue[xx].wirevalue[0]<<std::endl;
-						//std::cout<<"Stored data = "<<storeData[ww].CV[xx].wirename<<" "<<storeData[ww].CV[xx].wirevalue[0]<<std::endl;
-						//std::cout<<" load the computed data = "<<moduledetails[me].currentValue[xx].wirename<<std::endl;
 					}
-					//std::cout<<" loaded size = "<<moduledetails[me].currentValue.size()<<std::endl;
-					//for(int ff = 0; ff < moduledetails[me].currentValue.size(); ff++)
-					//{
-						//	std::cout<<" load the computed data = "<<moduledetails[me].currentValue[ff].wirename<<" "<<moduledetails[me].currentValue[ff].wirevalue[0]<<std::endl;
-
-					//}
 					for(xx = 0; xx<storeData[ww].PV.size();xx++)
 					{
 						tempcv_vector.wirename = storeData[ww].PV[xx].wirename;
@@ -3840,13 +3072,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 
 						moduledetails[me].prevValue.insert(moduledetails[me].prevValue.begin(),tempcv_vector);
 						tempcv_vector.wirevalue.pop_back();
-
-						//moduledetails[me].currentValue[xx].wirevalue.insert(moduledetails[me].currentValue[xx].wirevalue.begin(),storeData[ww].CV[xx]);
-						//std::cout<<" load the computed data = "<<moduledetails[me].currentValue[xx].wirename<<" "<<moduledetails[me].currentValue[xx].wirevalue[0]<<std::endl;
-
 					}
-						//moduledetails[me].prevValue[xx].wirevalue.insert(moduledetails[me].prevValue[xx].wirevalue.begin(),storeData[ww].PV[xx]);
-
 					for(xx = 0; xx<storeData[ww].TV.size();xx++)
 					{
 						temptv_vector.wirename = storeData[ww].TV[xx].wirename;
@@ -3857,10 +3083,8 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 
 
 					}
-						//moduledetails[me].trisValue[xx].wirevalueB = storeData[ww].TV[xx];
 				}
-				//std::cout<<"moduledetails[me].componentdetails.size() = "<< moduledetails[me].componentdetails.size() <<std::endl;
-// send the input values to the called routine
+				// send the input values to the called routine
 				for(k = 0;k < moduledetails[me].moduleparameters.size();k++)
 				{
 					if(moduledetails[me].moduleparameters[k].type == 0)//input in
@@ -3868,8 +3092,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 						//std::cout<<"  moduledetails[prev_me].currentValue.size() = "<< moduledetails[prev_me].currentValue.size() <<std::endl;
 						for(j = 0,found = 0; j < moduledetails[prev_me].currentValue.size(); j++)
 						{
-							//std::cout<<"cd[i].pinname[k] = "<<cd[i].pinname[k]<<" "<<"moduledetails[prev_me].currentValue[j].wirename = "<< moduledetails[prev_me].currentValue[j].wirename<<std::endl;
-
 							if(cd[i].pinname[k] == moduledetails[prev_me].currentValue[j].wirename)
 							{
 								found = 1;
@@ -3878,8 +3100,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 						}
 						tempcv_vector.wirename.assign(moduledetails[me].moduleparameters[k].pinname);
 
-// error was here  prachi
-///////////////////////////////////////////////////
 						if(found)// get the pin in the bus
 						{
 							if(cd[i].busstartindex[k] != -1)// not a single wire
@@ -3894,7 +3114,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 						else
 							result = 0;
 
-/////////////////////////////////////////////////
 						if(found)
 							tempcv_vector.wirevalue.push_back(result);//moduledetails[prev_me].currentValue[j].wirevalue[0]);
 						else
@@ -3902,8 +3121,7 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 
 						for(j = 0,found = 0; j < moduledetails[me].currentValue.size(); j++)
 						{
-							//std::cout<<"PRACHI moduledetails[me].moduleparameters[k].pinname = "<< moduledetails[me].moduleparameters[k].pinname <<std::endl;
-							//std::cout<<"PRACHI moduledetails[me].currentValue[j].wirename = "<< moduledetails[me].currentValue[j].wirename <<std::endl;
+						
 							if(moduledetails[me].moduleparameters[k].pinname == moduledetails[me].currentValue[j].wirename)
 							{
 								found = 1;
@@ -3919,12 +3137,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 						//moduledetails[0].currentValue.insert(moduledetails[0].currentValue.begin()+m,tempcv_vector);
 					}
 				}
-
-				//std::cout<<"Size OF currentValue after checking input  module = "<<moduledetails[me].currentValue.size()<<std::endl;
-
-				//for(int kk = 0; kk< moduledetails[me].currentValue.size(); kk++)
-					//std::cout<<"CONTENTS OF currentValue after checking input  module = "<<moduledetails[me].currentValue[kk].wirename<<" "<<moduledetails[me].currentValue[kk].wirevalue[0]<<std::endl;
-
 				prev_cde = i;// store the cd index from which the module is being called
 				for(k = 0;k < moduledetails[me].componentdetails.size();k++)
 				{
@@ -3936,13 +3148,9 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 				me = me_vector.back();
 				me_vector.pop_back();
 
-				//for (int hh = 0; hh < me_vector.size();hh++)
-					//std::cout<<"me_vector after pop= "<< me_vector.at(hh) <<std::endl;
 // copy data back to the calling module
 				for(k = 0 ; k< cd[i].pinname.size(); k++) // calling routine pins
 				{
-					//std::cout<<"cd[i].pinname[k] = "<< cd[i].pinname[k] <<std::endl;
-
 					found = 0;
 					for(m = 0; m < moduledetails[me].currentValue.size(); m++)
 					{
@@ -3960,12 +3168,8 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 					{
 						if(moduledetails[called_me].moduleparameters[j].type == 1)// output pin
 						{
-							//std::cout<<"moduledetails[called_me].moduleparameters[j].pinname = "<< moduledetails[called_me].moduleparameters[j].pinname <<std::endl;
-							//std::cout<<"moduledetails[called_me].currentValue size = "<< moduledetails[called_me].currentValue.size() <<std::endl;
 							for(n = 0; n < moduledetails[called_me].currentValue.size(); n++)
 							{
-								////std::cout<<"moduledetails[called_me].moduleparameters[j].pinname = "<< moduledetails[called_me].moduleparameters[j].pinname <<std::endl;
-								////std::cout<<"moduledetails[called_me].currentValue[n].wirename = "<< moduledetails[called_me].currentValue[n].wirename <<std::endl;
 								if (moduledetails[called_me].moduleparameters[j].pinname == moduledetails[called_me].currentValue[n].wirename)
 								{
 									break;
@@ -3995,17 +3199,11 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 								moduledetails[me].currentValue.erase(moduledetails[me].currentValue.begin()+m);
 							moduledetails[me].currentValue.insert(moduledetails[me].currentValue.begin()+m,tempcv_vector);
 							tempcv_vector.wirevalue.pop_back();
-							//std::cout<<"moduledetails[me].currentValue  ="<<moduledetails[me].currentValue[m].wirename<<" " <<moduledetails[me].currentValue[m].wirevalue[0] << std::endl;
-
-							//moduledetails[0].currentValue[m].wirevalue[0] = moduledetails[me].currentValue[n].wirevalue[0];
-							//std::cout<<"Output wirename ="<<moduledetails[me].moduleparameters[j].pinname<<std::endl;
 							break;
 						}
 					}
 				}
 
-
-				//////////////////////counter error trial
 				for(j = 0 ; j< moduledetails[called_me].moduleparameters.size(); j++)// called routine pins
 				{
 					if(moduledetails[called_me].moduleparameters[j].type == 1)// output pin
@@ -4015,10 +3213,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 
 							if((moduledetails[me].componentdetails[ww].componenttype == "evl_dff") )
 							{
-								//std::cout<<"moduledetails[me].componentdetails[ww].componenttype  ="<<moduledetails[me].componentdetails[ww].componenttype<<std::endl;
-								//std::cout<<"moduledetails[me].componentdetails[ww].pinname[1]  ="<<moduledetails[me].componentdetails[ww].pinname[1]<<std::endl;
-								//std::cout<<"cd[i].pinname[j]  ="<<cd[i].pinname[j]<<std::endl;
-
 								if (moduledetails[me].componentdetails[ww].pinname[1].compare(cd[i].pinname[j])==0)
 								{
 									for(n = 0; n < moduledetails[called_me].currentValue.size(); n++)
@@ -4063,9 +3257,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 						}
 					}
 				}
-
-/////////////////////counter error
-
 				// store away the computed data
 
 				tempstoreData.ComponentName.assign(cd[i].componentname);
@@ -4090,11 +3281,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 				}
 				for(ww = 0; ww<moduledetails[called_me].trisValue.size();ww++)
 				{
-
-					//temptv_vector.wirevalueB = tempcv.wirevalue;//insert(temptv_vector.wirevalueB.begin(),tempcv.wirevalue);
-						//temptv_vector.wirevalueZ = tempwirevalue;//insert(temptv_vector.wirevalueZ.begin(),tempwirevalue);
-
-					//tempstoreData.TV.push_back(moduledetails[called_me].trisValue[ww].wirevalueB);
 					temptv_vector.wirename = moduledetails[called_me].trisValue[ww].wirename;
 					temptv_vector.wirevalueB = moduledetails[called_me].trisValue[ww].wirevalueB;
 					tempstoreData.TV.push_back(temptv_vector);
@@ -4117,9 +3303,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 
 				storeData.insert(storeData.begin()+rr,tempstoreData);
 
-				//storeData.push_back(tempstoreData);
-				//std::cout<<"storeData size ="<<storeData.size()<<std::endl;
-
 				tempstoreData.CV.clear();
 				tempstoreData.PV.clear();
 				tempcv_vector.wirevalue.clear();
@@ -4128,13 +3311,6 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 				moduledetails[called_me].trisValue.clear();
 				std::cout<<"All is well"<<std::endl;
 
-/*				moduledetails[k] = tempmd ;
-				std::cout<<"Current Value size after simulate ="<<moduledetails[me].currentValue.size()<<std::endl;
-*/
-				/*for(k = 0 ; k< moduledetails[me].currentValue.size(); k++)
-				{
-					std::cout<<"Current Value wirename in MODULE ="<<moduledetails[me].currentValue[k].wirename<<"  Current Value  ="<<moduledetails[me].currentValue[k].wirevalue[0]<<std::endl;
-				}*/
 				for(k = 0 ; k< moduledetails[called_me].componentdetails.size(); k++)
 				{
 					moduledetails[called_me].componentdetails[k].simulationID = 0;
@@ -4146,22 +3322,11 @@ void Simulate(std::string argv,/*std::vector<struct modulestruct>&moduledetails,
 			}
 		}
 	}// for loop running through all components
-	//	std::cout<<"tempcv_vector wirename ="<<tempcv_vector.wirename<<std::endl;
-
-	//	for(k = 0 ; k< moduledetails[me].currentValue.size(); k++)
-	//	{
-	//		std::cout<<"tempcv_vector Value  ="<<tempcv_vector.wirevalue[k]<<std::endl;
-	//	}
-	//	for(k = 0 ; k< moduledetails[me].currentValue.size(); k++)
-	//	{
-	//		std::cout<<"Current Value wirename ="<<moduledetails[me].currentValue[k].wirename<<std::endl;
-	//		std::cout<<"Current Value  ="<<moduledetails[me].currentValue[k].wirevalue[0]<<std::endl;
-	//}
 }
 
 void CheckComponentPinValidity(std::vector<struct componentstruct> & cd,std::vector<struct netstruct> & net)
 {
-	unsigned int i=0,j=0;//general purpose variables for loop //Nov
+	unsigned int i=0,j=0;//general purpose variables for loop
 	int wireexists;
 	struct netstruct comparenet;
 
@@ -4179,12 +3344,12 @@ void CheckComponentPinValidity(std::vector<struct componentstruct> & cd,std::vec
 					if (wireexists == -1) 
 					{
 						cd.erase (cd.begin()+i);
-						break; //go to look into next cd Oct11 after submission
+						break; //go to look into next cd 
 					}
 				}
 				else
 				{
-					//for (int k = cd[i].busendindex[j]; k< cd[i].busstartindex[j];k++)//Oct 21
+					//for (int k = cd[i].busendindex[j]; k< cd[i].busstartindex[j];k++)
 					{
 						comparenet.wirename = cd[i].pinname[j];
 						comparenet.wireindex = cd[i].busstartindex[j];
@@ -4192,14 +3357,14 @@ void CheckComponentPinValidity(std::vector<struct componentstruct> & cd,std::vec
 						if (wireexists == -1) 
 						{
 							cd.erase (cd.begin()+i);
-							i--;// Oct 26 ; when an element is deleted all others moved up , so i-- is necessary to access the next cd
-							break;//go to look into next cd Oct11 after submission
+							i--;// when an element is deleted all others moved up , so i-- is necessary to access the next cd
+							break;//go to look into next cd
 						}
 
 					}
 				}
 			}
-			//	if(!flag) break;//go to look into next cd Oct11 after submission // Oct 21
+			//	if(!flag) break;//go to look into next cd 
 		}
 	}
 }
@@ -5813,13 +4978,6 @@ unsigned  CheckComponentExecStatus(struct componentstruct cd,unsigned pinindex, 
 
 	for(k = 0; k< nl.size(); k++)//find input pin value in currentValue vector
 	{
-		//std::string temp1;
-		//temp1.assign(nl[k].wireName);
-		//std::string temp2;
-		//temp2.assign(cd.pinname[1]);
-		//std::cout<<"nl[k].wireName = "<<nl[k].wireName<<std::endl;
-		//std::cout<<"cd.pinname[1] = "<<cd.pinname[1]<<std::endl;
-
 		if((nl[k].wireName.compare(cd.pinname[pinindex]) == 0)&&(net[k].wireindex == wire_no))
 		{
 
@@ -5883,13 +5041,6 @@ unsigned  CheckModuleExecStatus(struct componentstruct cd,unsigned pinindex, uns
 
 	for(k = 0; k< nl.size(); k++)//find input pin value in currentValue vector
 	{
-		//std::string temp1;
-		//temp1.assign(nl[k].wireName);
-		//std::string temp2;
-		//temp2.assign(cd.pinname[1]);
-		//std::cout<<"nl[k].wireName = "<<nl[k].wireName<<std::endl;
-		//std::cout<<"cd.pinname[1] = "<<cd.pinname[1]<<std::endl;
-
 		if((nl[k].wireName.compare(cd.pinname[pinindex]) == 0)&&(net[k].wireindex == wire_no))
 		{
 
@@ -5955,19 +5106,3 @@ unsigned  CheckModuleExecStatus(struct componentstruct cd,unsigned pinindex, uns
 	}
 	else return 0;
 }
-
-/*tempcditem.componenttype.assign(cd[input_pin_cd].componenttype);
-tempcditem.componentname.assign(cd[input_pin_cd].componentname);
-tempcditem.componentsize = cd[input_pin_cd].componentsize;
-tempcditem.simulationID = cd[input_pin_cd].simulationID;
-for(int pinnum=0; pinnum<cd[input_pin_cd].pinname.size();pinnum++)
-tempcditem.pinname.push_back(cd[input_pin_cd].pinname.at(pinnum));
-for(int bsnum=0; bsnum<cd[input_pin_cd].busstartindex.size();bsnum++)
-tempcditem.busstartindex.push_back(cd[input_pin_cd].busstartindex[bsnum]);
-for(int benum=0; benum<cd[input_pin_cd].busendindex.size();benum++)
-tempcditem.busendindex.push_back(cd[input_pin_cd].busendindex[benum]);
-for(int passnum=0; passnum<cd[input_pin_cd].pass.size();passnum++)
-tempcditem.pass.push_back(cd[input_pin_cd].pass[passnum]);
-for(int pvnum=0; pvnum<cd[input_pin_cd].pinvalue.size();pvnum++)
-tempcditem.pinvalue.push_back(cd[input_pin_cd].pinvalue[pvnum]);
-tempcd.push_back(tempcditem);//todo psc make sure vector is emptied*/
