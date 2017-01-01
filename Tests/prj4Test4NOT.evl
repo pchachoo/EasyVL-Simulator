@@ -1,0 +1,58 @@
+module Test_NOT;
+
+ 
+  wire [3:0] not_in,not_out;
+ 
+  wire [15:0] or_in,a,xor_in;
+  wire [7:0]  s,or_out,xor_out;
+ 
+ 
+  evl_input sim_in(a, or_in, xor_in,not_in);
+  
+  and(s[0],a[0],a[1]); 
+  and(s[1],a[0],a[3]); 
+  and(s[2],a[0],a[5]); 
+  and(s[3],a[0],a[7]);
+  and(s[4],a[0],a[9]);
+  and(s[5],a[0],a[11]);  
+  and(s[6],a[0],a[13]);  
+  and(s[7],a[0],a[15]);
+
+  or(or_out[0],or_in[0],or_in[1]); 
+  or(or_out[1],or_in[0],or_in[1]); 
+  or(or_out[2],or_in[0],or_in[1]); 
+  or(or_out[3],or_in[0],or_in[1]);
+  or(or_out[4],or_in[0],or_in[1]);
+  or(or_out[5],or_in[4],or_in[2]);
+  or(or_out[6],or_in[13],or_in[12]);
+  or(or_out[7],or_in[13],or_in[15]);
+  
+  evl_output or_result(or_in, or_out);
+  evl_output and_result(a, s);
+  
+  
+  xor(xor_out[0],xor_in[0],xor_in[1]); 
+  xor(xor_out[1],xor_in[1],xor_in[2]); 
+  xor(xor_out[2],xor_in[3],xor_in[1]); 
+  xor(xor_out[3],xor_in[4],xor_in[2]);
+  xor(xor_out[4],xor_in[6],xor_in[1]);
+  xor(xor_out[5],xor_in[4],xor_in[15]);
+  xor(xor_out[6],xor_in[14],xor_in[12]);
+  xor(xor_out[7],xor_in[10],xor_in[11]);
+  
+  evl_output xor_result(xor_in, xor_out);
+  
+  
+  not(not_out[0],or_in[0]); 
+  not(not_out[1],xor_in[2]); 
+  not(not_out[2],a[1]);  
+  not(not_out[3],a[7]); 
+  //not(not_out[9],not_in[5]);// prachi 
+  //not(not_out[11],not_in[0]);//not_out repeated, gives message but simulates too, bug
+ // not(not_out[11],not_in[4]);
+  //not(not_out[15],not_in[6);
+  evl_output not_result(not_in, not_out);
+  
+  
+
+endmodule // Test1

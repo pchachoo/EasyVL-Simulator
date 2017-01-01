@@ -1,0 +1,14 @@
+module Test1;
+  wire [15:0] mux_in,mux_o;
+  
+  evl_zero(mux_in[15:0]);
+  not(mux_o[4],mux_in[4]);
+  not(mux_o[3],mux_in[3]);
+  not(mux_o[2],mux_in[2]);
+  not(mux_o[1],mux_in[1]);
+  not(mux_o[0],mux_in[0]);
+ // evl_output not_result(mux_in, mux_o);
+  evl_zero(mux_o[15:5]);
+  evl_output evl_one_result(mux_o);
+     
+endmodule // Test1

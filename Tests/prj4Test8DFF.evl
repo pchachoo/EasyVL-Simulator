@@ -1,0 +1,16 @@
+module Test1;
+
+  wire [3:0] dff_out,dff_in;
+
+  wire clk;
+  evl_clock(clk);
+
+  evl_one(dff_in[3:0]);
+  evl_dff(dff_out[0], dff_in[0], clk);
+  evl_dff(dff_out[1], dff_in[1], clk);
+  evl_dff(dff_out[2], dff_in[2], clk);
+  evl_dff(dff_out[3], dff_in[3], clk);
+
+  evl_output evl_dff_result(dff_out); 
+     
+endmodule // Test1

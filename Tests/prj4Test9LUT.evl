@@ -1,0 +1,11 @@
+module test;
+
+wire [7:0] data;
+wire [3:0] addr;
+
+evl_one(addr[3:0]);
+evl_lut rom(data, addr[3:0]);
+
+evl_output sim_out(data);
+
+endmodule

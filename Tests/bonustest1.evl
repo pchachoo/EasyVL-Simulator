@@ -1,0 +1,15 @@
+module counter;
+
+  // simplest test
+
+  wire [15:0] a, in, s, mux_o;
+  wire set;
+  evl_input sim_in(set, in);
+  evl_output sim_out(a, s, in, set, mux_o);
+  evl_one(a);
+  evl_one(s);
+  evl_zero(mux_o);
+  // states
+  wire clk;
+  evl_clock(clk);
+  endmodule

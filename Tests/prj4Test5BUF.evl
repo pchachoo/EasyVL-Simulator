@@ -1,0 +1,22 @@
+module TestBuf;
+
+  wire [15:0] a,s,or_in,or_out;
+  wire [15:0] xor_in,xor_out;
+  wire [7:0] buf_in,buf_out;
+
+  evl_one(buf_in[7:0]);
+   
+  buf(buf_out[3],buf_in[3]); 
+  buf(buf_out[5],buf_in[5]); 
+  buf(buf_out[7],buf_in[7]); 
+  buf(buf_out[6],buf_in[6]); 
+  buf(buf_out[4],buf_in[4]);
+  buf(buf_out[2],buf_in[2]);
+  buf(buf_out[1],buf_in[1]);
+  buf(buf_out[0],buf_in[0]);
+  
+  evl_output buf_result(buf_in, buf_out);
+  
+
+      
+endmodule // Test1
